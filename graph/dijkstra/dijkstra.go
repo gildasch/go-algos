@@ -9,14 +9,14 @@ type Dijkstraer interface {
 }
 
 func ShortestPath(d Dijkstraer, beg, end int) int {
-	return ShortestPathRec(d, beg, end,
+	return ShortestPathRec(d, beg, end, nil,
 		&remaining{
 			[]int{beg},
 			map[int]int{beg: 0},
 		})
 }
 
-func ShortestPathRec(d Dijkstraer, beg, end int, remaining *remaining) int {
+func ShortestPathRec(d Dijkstraer, beg, end int, visited []int, remaining *remaining) int {
 	ci, cd := remaining.pop()
 	if ci == end {
 		return cd
@@ -24,9 +24,20 @@ func ShortestPathRec(d Dijkstraer, beg, end int, remaining *remaining) int {
 		return -1
 	}
 
-	neighbours := d.Dist(ci)
-	remaining.process(cd, neighbours)
-	return ShortestPathRec(d, beg, end, remaining)
+	hasBeenVisited := false
+	for _, i := range visited {
+		if i == ci {
+			hasBeenVisited = true
+			break
+		}
+	}
+
+	if !hasBeenVisited {
+		neighbours := d.Dist(ci)
+		remaining.process(cd, neighbours)
+		visited = append(visited, ci)
+	}
+	return ShortestPathRec(d, beg, end, visited, remaining)
 }
 
 type edge struct {
