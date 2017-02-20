@@ -8,7 +8,7 @@ import (
 
 type dGraph map[int][]edge
 
-func (d dGraph) Dist(a int) map[int]int {
+func (d dGraph) Neighbours(a int) map[int]int {
 	ret := make(map[int]int)
 	for _, e := range d[a] {
 		ret[e.id] = e.dist

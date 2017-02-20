@@ -4,19 +4,24 @@ import (
 	"sort"
 )
 
+// Dijkstraer is the interface that a graph must satisfy to be Dijkstraed
 type Dijkstraer interface {
-	Dist(a int) map[int]int
+	// Neighbours returns a map of all the neighbours of node a
+	// - the keys are the identifier of the nodes
+	// - the values are the distance from a to that node
+	Neighbours(a int) map[int]int
 }
 
+// ShortestPath returns the minimal distance from node `beg` to node `end` in graph `d`
 func ShortestPath(d Dijkstraer, beg, end int) int {
-	return ShortestPathRec(d, beg, end, nil,
+	return shortestPathRec(d, beg, end, nil,
 		&remaining{
 			[]int{beg},
 			map[int]int{beg: 0},
 		})
 }
 
-func ShortestPathRec(d Dijkstraer, beg, end int, visited []int, remaining *remaining) int {
+func shortestPathRec(d Dijkstraer, beg, end int, visited []int, remaining *remaining) int {
 	ci, cd := remaining.pop()
 	if ci == end {
 		return cd
@@ -33,11 +38,11 @@ func ShortestPathRec(d Dijkstraer, beg, end int, visited []int, remaining *remai
 	}
 
 	if !hasBeenVisited {
-		neighbours := d.Dist(ci)
+		neighbours := d.Neighbours(ci)
 		remaining.process(cd, neighbours)
 		visited = append(visited, ci)
 	}
-	return ShortestPathRec(d, beg, end, visited, remaining)
+	return shortestPathRec(d, beg, end, visited, remaining)
 }
 
 type edge struct {
