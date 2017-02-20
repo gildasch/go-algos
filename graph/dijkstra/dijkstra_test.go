@@ -1,7 +1,6 @@
 package dijkstra
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -95,14 +94,48 @@ var g = dGraph{
 	},
 }
 
+var gCorrupt = dGraph{
+	0: []edge{
+		edge{1, 7},
+		edge{2, 9},
+		edge{3, 14},
+	},
+	1: []edge{
+		edge{0, 7},
+		edge{4, 20},
+	},
+	2:  []edge{edge{10, 1}},
+	4:  []edge{},
+	10: []edge{edge{4, 100}},
+}
+
 func TestShortestPath(t *testing.T) {
 	shortestSmall := ShortestPath(gSmall, 0, 5)
-	fmt.Println("The shortest path is", shortestSmall)
 	assert.Equal(t, 20, shortestSmall)
 
 	shortest := ShortestPath(g, 0, 9)
-	fmt.Println("The shortest path is", shortest)
 	assert.Equal(t, 487, shortest)
+}
+
+func TestNoPath(t *testing.T) {
+	ret := ShortestPath(gSmall, 0, 6)
+	assert.Equal(t, -1, ret)
+
+	ret = ShortestPath(g, 0, 10)
+	assert.Equal(t, -1, ret)
+}
+
+func TestBadBegOrEnd(t *testing.T) {
+	ret := ShortestPath(gSmall, -1, 5)
+	assert.Equal(t, -1, ret)
+
+	ret = ShortestPath(g, 0, -1)
+	assert.Equal(t, -1, ret)
+}
+
+func TestBadGraph(t *testing.T) {
+	ret := ShortestPath(gCorrupt, 0, 4)
+	assert.Equal(t, 27, ret)
 }
 
 func BenchmarkShortestPathSmall(b *testing.B) {
