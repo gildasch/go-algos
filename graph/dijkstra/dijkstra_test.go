@@ -8,6 +8,11 @@ import (
 
 type dGraph map[int][]edge
 
+type edge struct {
+	id   int
+	dist int
+}
+
 func (d dGraph) Neighbours(a int) map[int]int {
 	ret := make(map[int]int)
 	for _, e := range d[a] {
