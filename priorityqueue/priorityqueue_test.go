@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com.bak/stretchr/testify/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAddAndPop(t *testing.T) {
@@ -23,16 +23,16 @@ func TestAddAndPop(t *testing.T) {
 
 	i, p := pq.Pop()
 	fmt.Println("Apres pop1:", pq)
-	assert.Equal(t, i, 124)
-	assert.Equal(t, p, 10)
+	assert.Equal(t, 124, i)
+	assert.Equal(t, 10, p)
 
 	i, p = pq.Pop()
 	fmt.Println("Apres pop2:", pq)
-	assert.Equal(t, i, 126)
-	assert.Equal(t, p, 5)
+	assert.Equal(t, 126, i)
+	assert.Equal(t, 5, p)
 
 	i, p = pq.Pop()
 	fmt.Println("Apres pop3:", pq)
-	assert.Equal(t, i, 125)
-	assert.Equal(t, p, 3)
+	assert.Equal(t, 125, i)
+	assert.Equal(t, 3, p)
 }

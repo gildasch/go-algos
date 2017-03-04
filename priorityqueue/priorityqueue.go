@@ -8,12 +8,12 @@ type PriorityQueue struct {
 type priorityq []node
 
 type node struct {
-	id   int
+	id   interface{}
 	prio int
 }
 
 // p is the priority and must be a positive integer
-func (pq *PriorityQueue) Add(i, p int) {
+func (pq *PriorityQueue) Add(i interface{}, p int) {
 	if pq.Less == nil {
 		// Default Less function
 		pq.Less = func(a, b int) bool {
@@ -33,7 +33,7 @@ func (pq *PriorityQueue) Add(i, p int) {
 	}
 }
 
-func (pq *PriorityQueue) Pop() (int, int) {
+func (pq *PriorityQueue) Pop() (interface{}, int) {
 	if len(pq.p) < 1 {
 		return -1, -1
 	}
@@ -59,11 +59,11 @@ func (pq *PriorityQueue) MaxHeapify(cur int) {
 	left := 2*cur + 1
 	right := 2*cur + 2
 
-	if left < len(pq.p) && pq.Less(pq.p[cur].prio, pq.p[left].prio) {
+	if left < len(pq.p) && pq.Less(pq.p[largest].prio, pq.p[left].prio) {
 		largest = left
 	}
 
-	if right < len(pq.p) && pq.Less(pq.p[cur].prio, pq.p[right].prio) {
+	if right < len(pq.p) && pq.Less(pq.p[largest].prio, pq.p[right].prio) {
 		largest = right
 	}
 
