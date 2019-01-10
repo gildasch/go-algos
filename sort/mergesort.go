@@ -1,12 +1,18 @@
 package sort
 
-func MergeSort(s []int) []int {
+func init() {
+	Algorithms["merge sort"] = func(a []int) {
+		Mergesort(a)
+	}
+}
+
+func Mergesort(s []int) []int {
 	if len(s) < 2 {
 		return s
 	}
 
-	a := MergeSort(s[:len(s)/2])
-	b := MergeSort(s[len(s)/2:])
+	a := Mergesort(s[:len(s)/2])
+	b := Mergesort(s[len(s)/2:])
 
 	for i := 0; i < len(s); i++ {
 		if len(a) == 0 {

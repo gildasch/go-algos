@@ -1,7 +1,8 @@
 package sort
 
 import (
-	"sort"
+	"fmt"
+	"math/rand"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -33,68 +34,60 @@ func TestSort(t *testing.T) {
 	}
 }
 
-func BenchmarkQuickSort(b *testing.B) {
+func BenchmarkSort(b *testing.B) {
+	sizes := []int{1000, 100000}
+	inputSlices := map[string]func(n int) []int{
+		"random": randomSlice,
+		"sorted": sortedSlice,
+	}
 
-	for i := 0; i < b.N; i++ {
-		b.StopTimer()
-		a := randomSlice(1000)
-		b.StartTimer()
+	for _, size := range sizes {
+		for sliceType, generator := range inputSlices {
+			for name, f := range Algorithms {
+				b.Run(fmt.Sprintf("%s on %s list of size %d", name, sliceType, size), func(b *testing.B) {
+					for i := 0; i < b.N; i++ {
+						b.StopTimer()
+						a := generator(size)
+						b.StartTimer()
 
-		QuickSort(a)
+						f(a)
+					}
+				})
+			}
+		}
 	}
 }
 
-func BenchmarkMergeSort(b *testing.B) {
+func randomSlice(n int) []int {
+	var a []int
 
-	for i := 0; i < b.N; i++ {
-		b.StopTimer()
-		a := randomSlice(1000)
-		b.StartTimer()
-
-		MergeSort(a)
+	for i := 0; i < n; i++ {
+		a = append(a, rand.Int())
 	}
+
+	return a
 }
 
-func BenchmarkStdSort(b *testing.B) {
+func sortedSlice(n int) []int {
+	var a []int
 
-	for i := 0; i < b.N; i++ {
-		b.StopTimer()
-		a := randomSlice(1000)
-		b.StartTimer()
-
-		sort.Slice(a, func(i, j int) bool { return a[i] < a[j] })
+	for i := 0; i < n; i++ {
+		a = append(a, i)
 	}
+
+	return a
 }
 
-func BenchmarkQuickSort100000(b *testing.B) {
-
-	for i := 0; i < b.N; i++ {
-		b.StopTimer()
-		a := randomSlice(100000)
-		b.StartTimer()
-
-		QuickSort(a)
+func inOrder(a []int) bool {
+	if len(a) < 2 {
+		return true
 	}
-}
 
-func BenchmarkMergeSort100000(b *testing.B) {
-
-	for i := 0; i < b.N; i++ {
-		b.StopTimer()
-		a := randomSlice(100000)
-		b.StartTimer()
-
-		MergeSort(a)
+	for i := 0; i <= len(a)-2; i++ {
+		if a[i] > a[i+1] {
+			return false
+		}
 	}
-}
 
-func BenchmarkStdSort100000(b *testing.B) {
-
-	for i := 0; i < b.N; i++ {
-		b.StopTimer()
-		a := randomSlice(100000)
-		b.StartTimer()
-
-		sort.Slice(a, func(i, j int) bool { return a[i] < a[j] })
-	}
+	return true
 }

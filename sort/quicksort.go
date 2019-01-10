@@ -1,14 +1,20 @@
 package sort
 
-func QuickSort(a []int) {
-	quickSort(a, 0, len(a)-1)
+func init() {
+	Algorithms["quick sort"] = func(a []int) {
+		Quicksort(a)
+	}
 }
 
-func quickSort(a []int, lo, hi int) {
+func Quicksort(a []int) {
+	quicksort(a, 0, len(a)-1)
+}
+
+func quicksort(a []int, lo, hi int) {
 	if lo < hi {
 		p := partition(a, lo, hi)
-		quickSort(a, lo, p-1)
-		quickSort(a, p+1, hi)
+		quicksort(a, lo, p-1)
+		quicksort(a, p+1, hi)
 	}
 }
 
