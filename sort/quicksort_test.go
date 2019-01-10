@@ -13,6 +13,7 @@ func TestQuickSortSimple(t *testing.T) {
 	QuickSort(a)
 
 	assert.True(t, inOrder(a))
+	assert.Len(t, a, 7)
 }
 
 func TestQuickSort(t *testing.T) {
@@ -21,6 +22,7 @@ func TestQuickSort(t *testing.T) {
 	QuickSort(a)
 
 	assert.True(t, inOrder(a))
+	assert.Len(t, a, 1000)
 }
 
 func randomSlice(n int) []int {
