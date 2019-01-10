@@ -3,7 +3,35 @@ package sort
 import (
 	"sort"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
+
+func TestSortSimple(t *testing.T) {
+	for name, f := range Algorithms {
+		t.Run(name, func(t *testing.T) {
+			a := []int{4, 3, 6, 8, 4, 2, 5}
+
+			f(a)
+
+			assert.True(t, inOrder(a))
+			assert.Len(t, a, 7)
+		})
+	}
+}
+
+func TestSort(t *testing.T) {
+	for name, f := range Algorithms {
+		t.Run(name, func(t *testing.T) {
+			a := randomSlice(1000)
+
+			f(a)
+
+			assert.True(t, inOrder(a))
+			assert.Len(t, a, 1000)
+		})
+	}
+}
 
 func BenchmarkQuickSort(b *testing.B) {
 
