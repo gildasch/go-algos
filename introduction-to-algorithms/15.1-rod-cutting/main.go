@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
 )
 
 var (
@@ -19,13 +20,28 @@ func main() {
 		log.Fatal(err)
 	}
 
+	start := time.Now()
 	rn := maxRevenue(n)
-	fmt.Printf("maximum revenue for a rod of length %d: %d\n", n, rn)
+	memoDuration := time.Since(start)
+
+	start = time.Now()
+	rn2 := maxRevenueBottomUp(n)
+	bottomUpDuration := time.Since(start)
+
+	if rn != rn2 {
+		fmt.Printf("memoization and bottom-up gave different results: %d and %d\n", rn, rn2)
+		return
+	}
+
+	fmt.Printf("maximum revenue for a rod of length %d: %d (memoization: %v, bottom-up: %v)\n",
+		n, rn, memoDuration, bottomUpDuration)
 }
 
-var cache = map[int]int{}
-
 func maxRevenue(n int) int {
+	return maxRevenueAux(n, map[int]int{})
+}
+
+func maxRevenueAux(n int, cache map[int]int) int {
 	if max, ok := cache[n]; ok {
 		return max
 	}
@@ -50,4 +66,26 @@ func maxRevenue(n int) int {
 
 	cache[n] = max
 	return max
+}
+
+func maxRevenueBottomUp(n int) int {
+	bottomUpCache := map[int]int{}
+
+	for k := 0; k <= n; k++ {
+		max := 0
+
+		for i, l := range lengths {
+			if l > k {
+				continue
+			}
+			subMax := prices[i] + bottomUpCache[k-l]
+			if subMax > max {
+				max = subMax
+			}
+		}
+
+		bottomUpCache[k] = max
+	}
+
+	return bottomUpCache[n]
 }
