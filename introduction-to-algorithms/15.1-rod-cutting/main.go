@@ -23,7 +23,13 @@ func main() {
 	fmt.Printf("maximum revenue for a rod of length %d: %d\n", n, rn)
 }
 
+var cache = map[int]int{}
+
 func maxRevenue(n int) int {
+	if max, ok := cache[n]; ok {
+		return max
+	}
+
 	max := 0
 
 	for i, l := range lengths {
@@ -42,5 +48,6 @@ func maxRevenue(n int) int {
 		}
 	}
 
+	cache[n] = max
 	return max
 }
