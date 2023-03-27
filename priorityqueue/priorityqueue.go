@@ -1,74 +1,79 @@
 package priorityqueue
 
-type PriorityQueue struct {
-	Less func(int, int) bool
-	p    priorityq
+import (
+	"fmt"
+	"strings"
+
+	"golang.org/x/exp/constraints"
+)
+
+type PriorityQueue[P constraints.Ordered, V any] struct {
+	storage []node[P, V]
 }
 
-type priorityq []node
-
-type node struct {
-	id   interface{}
-	prio int
+type node[P constraints.Ordered, V any] struct {
+	value V
+	prio  P
 }
 
 // p is the priority and must be a positive integer
-func (pq *PriorityQueue) Add(i interface{}, p int) {
-	if pq.Less == nil {
-		// Default Less function
-		pq.Less = func(a, b int) bool {
-			return a < b
-		}
-	}
+func (pq *PriorityQueue[P, V]) Add(i V, p P) {
+	pq.storage = append(pq.storage, node[P, V]{i, p})
 
-	pq.p = append(pq.p, node{i, p})
-
-	cur := len(pq.p) - 1
+	cur := len(pq.storage) - 1
 	for cur > 0 {
 		parent := cur / 2
-		if pq.Less(pq.p[parent].prio, pq.p[cur].prio) {
-			pq.p[parent], pq.p[cur] = pq.p[cur], pq.p[parent]
+		if pq.storage[parent].prio < pq.storage[cur].prio {
+			pq.storage[parent], pq.storage[cur] = pq.storage[cur], pq.storage[parent]
 		}
 		cur = parent
 	}
 }
 
-func (pq *PriorityQueue) Pop() (interface{}, int) {
-	if len(pq.p) < 1 {
-		return -1, -1
+func (pq *PriorityQueue[P, V]) Pop() (value V, prio P) {
+	if len(pq.storage) < 1 {
+		return
 	}
 
-	ret := pq.p[0]
+	ret := pq.storage[0]
 
-	if len(pq.p) == 1 {
-		pq.p = nil
-		return ret.id, ret.prio
+	if len(pq.storage) == 1 {
+		pq.storage = nil
+		return ret.value, ret.prio
 	}
 
-	pq.p[0] = pq.p[len(pq.p)-1]
-	pq.p = pq.p[:len(pq.p)-1]
+	pq.storage[0] = pq.storage[len(pq.storage)-1]
+	pq.storage = pq.storage[:len(pq.storage)-1]
 
 	pq.MaxHeapify(0)
 
-	return ret.id, ret.prio
+	return ret.value, ret.prio
 }
 
-func (pq *PriorityQueue) MaxHeapify(cur int) {
+func (pq *PriorityQueue[P, V]) MaxHeapify(cur int) {
 	largest := cur
 
 	left := 2*cur + 1
 	right := 2*cur + 2
 
-	if left < len(pq.p) && pq.Less(pq.p[largest].prio, pq.p[left].prio) {
+	if left < len(pq.storage) && pq.storage[largest].prio < pq.storage[left].prio {
 		largest = left
 	}
 
-	if right < len(pq.p) && pq.Less(pq.p[largest].prio, pq.p[right].prio) {
+	if right < len(pq.storage) && pq.storage[largest].prio < pq.storage[right].prio {
 		largest = right
 	}
 
 	if largest != cur {
-		pq.p[cur], pq.p[largest] = pq.p[largest], pq.p[cur]
+		pq.storage[cur], pq.storage[largest] = pq.storage[largest], pq.storage[cur]
 		pq.MaxHeapify(largest)
 	}
+}
+
+func (pq *PriorityQueue[P, V]) String() string {
+	content := []string{}
+	for _, n := range pq.storage {
+		content = append(content, fmt.Sprintf("<%v>", n))
+	}
+	return fmt.Sprintf("[ %s ]", strings.Join(content, " "))
 }

@@ -8,7 +8,7 @@ import (
 )
 
 func TestAddAndPop(t *testing.T) {
-	var pq PriorityQueue
+	pq := &PriorityQueue[int, int]{}
 
 	pq.Add(123, 1)
 	fmt.Println(pq)
